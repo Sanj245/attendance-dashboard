@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Attendance Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<h1>Student Attendance Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+<p>Attendance %</p>
+<h2 id="attendancePercent">--</h2>
+</div>
+
+<div class="card">
+<p>Classes Attended</p>
+<h2 id="attendedCount">--</h2>
+</div>
+
+<div class="card">
+<p>Classes Missed</p>
+<h2 id="missedCount">--</h2>
+</div>
+
+<div class="card">
+<p>Classes Needed</p>
+<h2 id="neededClasses">--</h2>
+</div>
+
+</div>
+
+<div class="input-box">
+
+<label>Classes Attended</label>
+<input type="number" id="present" placeholder="Enter attended classes">
+
+<label>Classes Missed</label>
+<input type="number" id="absent" placeholder="Enter missed classes">
+
+<button onclick="calculateAttendance()">Calculate Attendance</button>
+
+</div>
+
+<div id="statusMessage"></div>
+
+</div>
+
+<script src="attendance.js"></script>
+
+</body>
+
+</html>
