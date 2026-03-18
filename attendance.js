@@ -1,9 +1,51 @@
+let subjectData = {}; // session only
+let chart = null;
+
+/* Load dropdown */
+function loadDropdown() {
+
+let dropdown = document.getElementById("subjectDropdown");
+
+dropdown.innerHTML = '<option value="">Select Subject</option>';
+
+Object.keys(subjectData).forEach(sub => {
+let option = document.createElement("option");
+option.value = sub;
+option.textContent = sub;
+dropdown.appendChild(option);
+});
+
+}
+
+/* Select subject */
+function selectSubject() {
+
+let subject = document.getElementById("subjectDropdown").value;
+
+if (subject && subjectData[subject]) {
+
+document.getElementById("subjectName").value = subject;
+document.getElementById("present").value = subjectData[subject].present;
+document.getElementById("absent").value = subjectData[subject].absent;
+
+calculateAttendance();
+
+}
+
+}
+
+/* Main function */
 function calculateAttendance(){
 
+let subject = document.getElementById("subjectName").value.trim();
 let present = parseInt(document.getElementById("present").value);
 let absent = parseInt(document.getElementById("absent").value);
 
-// Validation
+if(subject === ""){
+alert("Please enter subject name");
+return;
+}
+
 if(present <= 0 || isNaN(present)){
 alert("Classes Attended must be greater than 0");
 return;
@@ -14,119 +56,154 @@ alert("Classes Missed cannot be negative");
 return;
 }
 
+/* Store in memory */
+subjectData[subject] = { present, absent };
+
+loadDropdown();
+
 let total = present + absent;
 let percentage = (present / total) * 100;
 
-// Classes needed to reach 85%
+/* Needed */
 let extraClasses = 0;
-
 while(((present + extraClasses) * 100) / (total + extraClasses) < 85){
 extraClasses++;
 }
 
-// Bunkable classes calculation
+/* Bunk */
 let bunk = 0;
-
 if(percentage >= 85){
 while((present * 100) / (total + bunk + 1) >= 85){
 bunk++;
 }
 }
 
-// Update dashboard cards
-document.getElementById("attendancePercent").innerText = percentage.toFixed(2) + "%";
+/* Update cards */
+document.getElementById("attendancePercent").innerText =
+percentage.toFixed(2) + "%";
+
 document.getElementById("attendedCount").innerText = present;
 document.getElementById("missedCount").innerText = absent;
-document.getElementById("neededClasses").innerText = extraClasses;
-document.getElementById("bunkableClasses").innerText = bunk;
 
-// Progress bar
+let neededCard = document.getElementById("neededCard");
+let bunkCard = document.getElementById("bunkCard");
+
+if(percentage >= 85){
+neededCard.style.display = "none";
+bunkCard.style.display = "block";
+document.getElementById("bunkableClasses").innerText = bunk;
+}
+else{
+neededCard.style.display = "block";
+bunkCard.style.display = "none";
+document.getElementById("neededClasses").innerText = extraClasses;
+}
+
+/* Progress */
 let progress = document.getElementById("progressFill");
 progress.style.width = percentage + "%";
 
-// Status message
+/* Status */
 let status = document.getElementById("statusMessage");
 
 if(percentage >= 85){
 progress.style.background = "#22c55e";
-status.innerText = "Great! Your attendance is above 85%";
+status.innerText = subject + " is safe 😎";
 status.style.color = "#22c55e";
-
 startConfettiShower();
 }
 else if(percentage >= 75){
 progress.style.background = "#f59e0b";
-status.innerText = "Attend " + extraClasses + " more classes to reach 85%";
+status.innerText = "Attend " + extraClasses + " more classes";
 status.style.color = "#f59e0b";
 }
 else{
 progress.style.background = "#ef4444";
-status.innerText = "Attendance is low. Attend classes to reach 85%";
+status.innerText = subject + " attendance is low";
 status.style.color = "#ef4444";
 }
 
-}
-/*confetti celebration */
-function startConfettiShower(){
-
-const duration = 2 * 1000;
-const animationEnd = Date.now() + duration;
-
-const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
-
-function randomInRange(min, max){
-return Math.random() * (max - min) + min;
-}
-
-const interval = setInterval(function(){
-
-const timeLeft = animationEnd - Date.now();
-
-if(timeLeft <= 0){
-return clearInterval(interval);
-}
-
-const particleCount = 50 * (timeLeft / duration);
-
-confetti(Object.assign({}, defaults, {
-particleCount,
-origin:{ x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-}));
-
-confetti(Object.assign({}, defaults, {
-particleCount,
-origin:{ x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-}));
-
-},250);
+/* Graph */
+updateChart();
 
 }
-// Dark / Light Mode Toggle
+
+/* Graph */
+function updateChart(){
+
+let subjects = Object.keys(subjectData);
+
+let percentages = subjects.map(sub => {
+let {present, absent} = subjectData[sub];
+return (present / (present + absent)) * 100;
+});
+
+if(chart){
+chart.destroy();
+}
+
+let ctx = document.getElementById("attendanceChart").getContext("2d");
+
+let gradient = ctx.createLinearGradient(0,0,0,400);
+gradient.addColorStop(0,"#6366f1");
+gradient.addColorStop(1,"#8b5cf6");
+
+chart = new Chart(ctx, {
+
+type: "bar",
+
+data: {
+labels: subjects,
+datasets: [{
+data: percentages,
+backgroundColor: gradient,
+borderRadius: 10
+}]
+},
+
+options: {
+plugins:{ legend:{display:false} },
+scales:{
+y:{ beginAtZero:true, max:100 }
+},
+animation:{ duration:1200 }
+}
+
+});
+
+}
+
+/* Theme */
 function toggleTheme(){
 
 document.body.classList.toggle("dark");
 
-const label = document.getElementById("modeLabel");
+let label = document.getElementById("modeLabel");
 
-if(label){
-if(document.body.classList.contains("dark")){
-label.textContent = "Dark Mode";
-}else{
-label.textContent = "Light Mode";
-}
-}
+label.textContent = document.body.classList.contains("dark")
+? "Light Mode"
+: "Dark Mode";
 
 }
 
-// Press Enter to Calculate
-document.getElementById("present").addEventListener("keypress", function(event){
-if(event.key === "Enter"){
-calculateAttendance();
+/* Confetti */
+function startConfettiShower(){
+
+const end = Date.now() + 2000;
+
+const interval = setInterval(function(){
+
+if(Date.now() > end){
+clearInterval(interval);
+return;
 }
+
+confetti({
+particleCount:60,
+spread:100,
+origin:{ y:0.6 }
 });
 
-document.getElementById("absent").addEventListener("keypress", function(event){
-if(event.key === "Enter"){
-calculateAttendance();
+},250);
+
 }
-});

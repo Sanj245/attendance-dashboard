@@ -1,34 +1,54 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
 <title>Attendance Dashboard</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
 <div class="dashboard">
 
-<!-- Header with Toggle Button -->
-
 <div class="header">
 
 <h1>Student Attendance Dashboard</h1>
 
 <div class="theme-toggle">
-
-<span id="modeLabel">Light Mode</span>
+<span id="modeLabel">Dark Mode</span>
 
 <label class="switch">
-<input type="checkbox" id="themeSwitch" onclick="toggleTheme()">
+<input type="checkbox" onclick="toggleTheme()">
 <span class="slider"></span>
 </label>
 
 </div>
+</div>
+
+<div class="input-box">
+
+<label>Subjects</label>
+<select id="subjectDropdown" onchange="selectSubject()">
+<option value="">Select Subject</option>
+</select>
+
+<label>Subject Name</label>
+<input type="text" id="subjectName" placeholder="Enter subject name">
+
+<label>Classes Attended</label>
+<input type="number" id="present" min="1">
+
+<label>Classes Missed</label>
+<input type="number" id="absent" min="0">
+
+<button onclick="calculateAttendance()">Add / Update Subject</button>
 
 </div>
 
@@ -49,12 +69,12 @@
 <h2 id="missedCount">--</h2>
 </div>
 
-<div class="card">
+<div class="card" id="neededCard">
 <p>Classes Needed</p>
 <h2 id="neededClasses">--</h2>
 </div>
 
-<div class="card">
+<div class="card" id="bunkCard">
 <p>Bunkable Classes</p>
 <h2 id="bunkableClasses">--</h2>
 </div>
@@ -62,6 +82,7 @@
 </div>
 
 <div class="progress-container">
+
 <p>Attendance Progress</p>
 
 <div class="progress-bar">
@@ -70,13 +91,11 @@
 
 </div>
 
-<div class="input-box">
+<div class="chart-container">
 
-<label>Classes Attended</label> <input type="number" id="present" placeholder="Enter attended classes" min="1">
+<h3>All Subjects Attendance</h3>
 
-<label>Classes Missed</label> <input type="number" id="absent" placeholder="Enter missed classes" min="0">
-
-<button onclick="calculateAttendance()">Calculate Attendance</button>
+<canvas id="attendanceChart"></canvas>
 
 </div>
 
@@ -85,12 +104,6 @@
 </div>
 
 <script src="attendance.js"></script>
-
-<script>
-function toggleTheme(){
-document.body.classList.toggle("dark");
-}
-</script>
 
 </body>
 </html>
