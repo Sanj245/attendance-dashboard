@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String          @id @default(uuid())
+  username  String          @unique
+  password  String          // Hashed
+  subjects  Subject[]
+  slots     TimetableSlot[]
+  logs      AttendanceLog[]
+}
+
+model Subject {
+  id        String          @id @default(uuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  present   Int             @default(0)
+  absent    Int             @default(0)
+  target    Int             @default(75)
+  slots     TimetableSlot[]
+  logs      AttendanceLog[]
+
+  @@unique([userId, name])
+}
+
+model TimetableSlot {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectId String
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  day       String   // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+  time      String   // e.g. 09:00 AM - 10:00 AM, 1st Hour
+}
+
+model AttendanceLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectId String
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  status    String   // attended, missed, cancelled
+  timestamp DateTime @default(now())
+}
