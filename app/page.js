@@ -731,6 +731,12 @@ export default function Home() {
         </button>
       </header>
 
+      {/* Sidebar overlay for mobile - click outside to close */}
+      <div
+        className={`sidebar-overlay ${mobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
       {/* Desktop Sticky Left Sidebar */}
       <aside className={`sidebar ${mobileMenuOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
@@ -774,11 +780,21 @@ export default function Home() {
       {/* Main Content panel viewports */}
       <main className="main-content">
         
-        {/* Top welcome greeting bar */}
+        {/* Top contextual page header bar */}
         <div className="greeting-row">
           <div className="greeting-info">
-            <h2>Hello, {activeUser.username}! 👋</h2>
-            <p>Welcome back to your dashboard planning suite.</p>
+            <h2>
+              {currentTab === 'dashboard' && <>Hello, {activeUser.username}! 👋</>}
+              {currentTab === 'timetable' && <>Weekly Planner 📅</>}
+              {currentTab === 'history' && <>Logs & Timeline 📋</>}
+              {currentTab === 'simulator' && <>What-If Simulator 🎛️</>}
+            </h2>
+            <p>
+              {currentTab === 'dashboard' && 'Welcome back to your attendance dashboard.'}
+              {currentTab === 'timetable' && 'Manage your weekly class schedule here.'}
+              {currentTab === 'history' && 'Browse and manage all your attendance check-in logs.'}
+              {currentTab === 'simulator' && 'Simulate future class decisions to project your attendance.'}
+            </p>
           </div>
           <div className="header-actions">
             <button className="btn btn-secondary btn-sm" onClick={() => setModals(prev => ({ ...prev, backup: true }))}>
@@ -1031,6 +1047,7 @@ export default function Home() {
           </div>
 
         </div>
+        {/* END TAB 1 */}
 
         {/* TAB 2: WEEKLY PLANNER TIMETABLE */}
         <div className={`tab-content ${currentTab === 'timetable' ? 'active' : ''}`}>
@@ -1042,7 +1059,7 @@ export default function Home() {
               </button>
             </div>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Define your weekly class schedule here. Classes configured here will automatically appear in your **Today's Agenda Checklist** on the Dashboard for easy tracking! Click a scheduled slot to delete it.
+              Define your weekly class schedule here. Classes configured here will automatically appear in your <strong>Today's Agenda Checklist</strong> on the Dashboard for easy tracking! Click a scheduled slot's trash icon to delete it.
             </p>
 
             <div className="timetable-grid-wrapper" style={{ overflowX: 'auto' }}>
@@ -1213,7 +1230,8 @@ export default function Home() {
             </div>
           )}
         </div>
-      </div>
+        </div>
+        {/* END TAB 4 */}
 
       {/* --- Modals --- */}
       

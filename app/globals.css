@@ -245,6 +245,7 @@ body {
   padding: 36px 40px;
   overflow-y: auto;
   max-height: 100vh;
+  position: relative;
 }
 
 /* Top Dashboard Greeting row */
@@ -1044,6 +1045,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
   .main-content {
     padding: 24px 20px;
+    padding-top: 80px; /* Clear the fixed mobile header */
     max-height: none;
   }
 
@@ -1058,18 +1060,55 @@ input[type="range"]::-webkit-slider-thumb:hover {
   }
 }
 
-/* --- Smooth Tab Navigation Visibility Engine --- */
-.tab-content {
+/* Mobile sidebar overlay backdrop */
+.sidebar-overlay {
   display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 9;
+  animation: fadeIn 0.25s ease;
+}
+
+@media (max-width: 900px) {
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+/* --- Smooth Tab Navigation Visibility Engine --- */
+/* Uses grid trick: collapsed rows are invisible but CSS transition still fires */
+.tab-content {
+  display: grid;
+  grid-template-rows: 0fr;
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  transform: translateY(10px);
+  transition:
+    opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+/* Inner wrapper needed for grid row collapse trick */
+.tab-content > * {
+  min-height: 0;
+  overflow: visible;
 }
 
 .tab-content.active {
-  display: block;
+  grid-template-rows: 1fr;
   opacity: 1;
+  pointer-events: auto;
   transform: translateY(0);
+}
+
+/* Tab viewport wrapper to contain absolute positioned inactive tabs */
+.tabs-viewport {
+  position: relative;
+  min-height: 200px;
 }
 
 /* --- Premium Subject Cards & Progress Upgrades --- */
