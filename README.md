@@ -1,6 +1,11 @@
 # 📚 Student Planner & Attendance Analytics Dashboard
 
-A modern, full-stack, secure **Student Agenda Planner and Real-Time Attendance Analytics Dashboard** built from the ground up using **Next.js (App Router)**, **React**, **Prisma ORM**, and **SQLite**. 
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-attendance--dashboard--gray.vercel.app-6366f1?style=for-the-badge)](https://attendance-dashboard-gray.vercel.app)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
+
+> 🌐 **Live Site:** [https://attendance-dashboard-gray.vercel.app](https://attendance-dashboard-gray.vercel.app)
+
+A modern, full-stack, secure **Student Agenda Planner and Real-Time Attendance Analytics Dashboard** built from the ground up using **Next.js (App Router)**, **React**, **Prisma ORM**, and **Turso (libSQL cloud database)**.
 
 This application features complete **relational database isolation** and a custom **secure HTTP-Only JWT Cookie Authentication system**, designed as a production-grade showcase of advanced full-stack software engineering practices.
 
