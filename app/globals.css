@@ -1077,38 +1077,27 @@ input[type="range"]::-webkit-slider-thumb:hover {
   }
 }
 
-/* --- Smooth Tab Navigation Visibility Engine --- */
-/* Uses grid trick: collapsed rows are invisible but CSS transition still fires */
+/* --- Tab Navigation Visibility Engine --- */
 .tab-content {
-  display: grid;
-  grid-template-rows: 0fr;
+  display: none;
   opacity: 0;
-  pointer-events: none;
-  transform: translateY(10px);
-  transition:
-    opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-}
-
-/* Inner wrapper needed for grid row collapse trick */
-.tab-content > * {
-  min-height: 0;
-  overflow: visible;
 }
 
 .tab-content.active {
-  grid-template-rows: 1fr;
+  display: block;
   opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+  animation: fadeInTab 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Tab viewport wrapper to contain absolute positioned inactive tabs */
-.tabs-viewport {
-  position: relative;
-  min-height: 200px;
+@keyframes fadeInTab {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- Premium Subject Cards & Progress Upgrades --- */
@@ -1235,3 +1224,77 @@ input[type="range"]::-webkit-slider-thumb:hover {
   color: var(--danger);
   background: rgba(239, 68, 68, 0.08);
 }
+
+/* --- Timetable Period Header Modern Styling --- */
+.timetable-period-th {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.timetable-period-th:hover {
+  background: rgba(99, 102, 241, 0.08) !important;
+}
+
+.period-th-actions {
+  opacity: 0;
+  transform: translateY(2px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.timetable-period-th:hover .period-th-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .period-th-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+.period-action-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.period-action-btn.edit {
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--primary);
+}
+
+.period-action-btn.edit:hover {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.period-action-btn.delete {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+}
+
+.period-action-btn.delete:hover {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.add-period-header-th {
+  transition: all 0.2s ease;
+}
+
+.add-period-header-th:hover {
+  background: rgba(99, 102, 241, 0.12) !important;
+  color: var(--primary-light) !important;
+}
+

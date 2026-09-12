@@ -73,6 +73,14 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: 'Subject not found' }, { status: 404 });
     }
 
+    // Delete associated slots and logs first to guarantee cascade safety
+    await prisma.timetableSlot.deleteMany({
+      where: { subjectId: id }
+    });
+    await prisma.attendanceLog.deleteMany({
+      where: { subjectId: id }
+    });
+
     const deleted = await prisma.subject.delete({
       where: { id }
     });
