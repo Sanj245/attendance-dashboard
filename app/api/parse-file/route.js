@@ -43,40 +43,14 @@ export async function POST(request) {
       await worker.terminate();
     }
 
-    if (!extractedText.trim()) {
-      return NextResponse.json({ error: 'Could not extract text. Please ensure the photo/PDF contains clear readable text.' }, { status: 422 });
+    const cleanText = extractedText.trim();
+    if (!cleanText || cleanText.length < 3) {
+      return NextResponse.json({ error: 'Could not detect clear text from file. Please ensure document/image is clear.' }, { status: 422 });
     }
 
-    return NextResponse.json({ success: true, text: extractedText.trim() });
+    return NextResponse.json({ success: true, text: cleanText });
   } catch (error) {
     console.error('Error in /api/parse-file:', error);
     return NextResponse.json({ error: 'File parsing failed: ' + error.message }, { status: 500 });
   }
-}
-
-// Pass 3: If still short, try PSM 6 (Uniform Block)
-if (resultText.trim().length < 30) {
-  await worker.setParameters({
-    tessedit_pageseg_mode: '6',
-  });
-  const ret3 = await worker.recognize(bufferToProcess);
-  if ((ret3.data?.text || '').trim().length > resultText.trim().length) {
-    resultText = ret3.data.text;
-  }
-}
-
-await worker.terminate();
-extractedText = resultText;
-    }
-
-const cleanText = extractedText.trim();
-if (!cleanText || cleanText.length < 3 || cleanText === 'f :' || cleanText === 'f') {
-  return NextResponse.json({ error: 'Could not detect clear text from photo. Please ensure image is well-lit and clear.' }, { status: 422 });
-}
-
-return NextResponse.json({ success: true, text: cleanText });
-  } catch (error) {
-  console.error('Error in /api/parse-file:', error);
-  return NextResponse.json({ error: 'File parsing failed: ' + error.message }, { status: 500 });
-}
 }
